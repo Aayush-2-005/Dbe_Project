@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Skill Match Tool</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f5f7fc;
+  padding: 20px;
+}
+.container {
+  max-width: 800px;
+  margin: auto;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+}
+input, select, button {
+  padding: 10px;
+  margin-top: 8px;
+  border-radius: 6px;
+  border: 1px solid #999;
+  width: 100%;
+}
+button {
+  background: #007bff;
+  color: white;
+  cursor: pointer;
+  border: none;
+}
+button:hover {
+  opacity: 0.9;
+}
+.tagBox {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.tag {
+  background: #e8f0ff;
+  padding: 6px 10px;
+  border-radius: 20px;
+  font-size: 14px;
+}
+#resultArea {
+  margin-top: 20px;
+  padding: 15px;
+  background: #fafafa;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  display: none;
+}
+ul {
+  padding-left: 20px;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+  <h2>Skill Mapping - Student Career Guidance</h2>
+
+  <label>Enter Skills Taught in Your Curriculum:</label>
+  <input type="text" id="skillInput" placeholder="Example: Python, SQL, DBMS">
+  <button onclick="addSkill()">Add Skill</button>
+
+  <div class="tagBox" id="skillDisplay"></div>
+
+  <label style="margin-top:20px;">Select Target Job Role:</label>
+  <select id="jobSelect"></select>
+
+  <button onclick="analyzeSkills()" style="margin-top:15px;">Compare Skills</button>
+
+  <div id="resultArea">
+    <h3>Skill Comparison Result</h3>
+    <p><strong>Skills You Have:</strong></p>
+    <ul id="haveList"></ul>
+    <p><strong>Skills You Need to Learn:</strong></p>
+    <ul id="needList"></ul>
+
+    <h3>Recommended Courses</h3>
+    <ul id="courseList"></ul>
+  </div>
+</div>
+
+<script>
+// Student-entered skills stored here
+let studentSkills = [];
+
+// Job database
+const JOBS = {
+  "Data Scientist": ["python", "statistics", "machine learning", "sql", "data visualization"],
+  "Machine Learning Engineer": ["python", "tensorflow", "pytorch", "deep learning", "model deployment"],
+  "Web Developer": ["html", "css", "javascript", "react", "git"],
+  "Data Analyst": ["excel", "sql", "tableau", "statistics", "power bi"]
+};
+
+// Recommended courses for missing skills
+const COURSES = {
+  "python": "Python for Everybody - Coursera",
+  "statistics": "Statistics for Data Science - Udemy",
+  "machine learning": "Andrew Ng ML Course - Coursera",
+  "sql": "SQL Basics - Khan Academy",
+  "data visualization": "Data Visualization - FreeCodeCamp",
+  "tensorflow": "Intro to TensorFlow - Udacity",
+  "pytorch": "Deep Learning with PyTorch - YouTube",
+  "deep learning": "Deep Learning Specialization - Coursera",
+  "model deployment": "Model Deployment Tutorial - YouTube",
+  "html": "HTML Full Course - FreeCodeCamp",
+  "css": "CSS Mastery - Udemy",
+  "javascript": "JavaScript Full Course - FreeCodeCamp",
+  "react": "React Course - Scrimba",
+  "git": "Git and GitHub Basics - YouTube",
+  "excel": "Excel Essentials - YouTube",
+  "tableau": "Tableau Training - YouTube",
+  "power bi": "Power BI Full Course - YouTube"
+};
+
+// Populate job dropdown
+const jobSelect = document.getElementById("jobSelect");
+Object.keys(JOBS).forEach(job => {
+  let opt = document.createElement("option");
+  opt.value = job;
+  opt.textContent = job;
+  jobSelect.appendChild(opt);
+});
+
+// Add skill from input
+function addSkill() {
+  let skill = document.getElementById("skillInput").value.trim().toLowerCase();
+  if (skill && !studentSkills.includes(skill)) {
+    studentSkills.push(skill);
+    displaySkills();
+  }
+  document.getElementById("skillInput").value = "";
+}
+
+// Display entered skills
+function displaySkills() {
+  document.getElementById("skillDisplay").innerHTML =
+    studentSkills.map(s => `<span class="tag">${s}</span>`).join("");
+}
+
+// Analyze skill gap
+function analyzeSkills() {
+  const selectedJob = jobSelect.value;
+  const requiredSkills = JOBS[selectedJob];
+
+  const have = requiredSkills.filter(skill => studentSkills.includes(skill));
+  const need = requiredSkills.filter(skill => !studentSkills.includes(skill));
+
+  document.getElementById("haveList").innerHTML = have.map(s => `<li>${s}</li>`).join("");
+  document.getElementById("needList").innerHTML = need.map(s => `<li>${s}</li>`).join("");
+
+  document.getElementById("courseList").innerHTML =
+    need.map(s => `<li>${COURSES[s] || "Search online resources"}</li>`).join("");
+
+  document.getElementById("resultArea").style.display = "block";
+}
+</script>
+
+</body>
+</html>
